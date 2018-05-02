@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\menu_link_content\Plugin\migrate\source\MenuLink.
- */
-
 namespace Drupal\menu_link_content\Plugin\migrate\source;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\migrate_drupal\Plugin\migrate\source\DrupalSqlBase;
 use Drupal\migrate\Row;
 
@@ -15,6 +11,7 @@ use Drupal\migrate\Row;
  *
  * @MigrateSource(
  *   id = "menu_link",
+ *   source_module = "menu"
  * )
  */
 class MenuLink extends DrupalSqlBase {
@@ -23,26 +20,34 @@ class MenuLink extends DrupalSqlBase {
    * {@inheritdoc}
    */
   public function query() {
-    return $this->select('menu_links', 'ml')
-      ->fields('ml')
-      ->orderby('ml.depth')
-      ->orderby('ml.mlid')
-      ->condition('module', 'menu')
-      ->condition('customized', 1);
+    $query = $this->select('menu_links', 'ml')
+      ->fields('ml');
+    $and = $query->andConditionGroup()
+      ->condition('ml.module', 'menu')
+      ->condition('ml.router_path', ['admin/build/menu-customize/%', 'admin/structure/menu/manage/%'], 'NOT IN');
+    $condition = $query->orConditionGroup()
+      ->condition('ml.customized', 1)
+      ->condition($and);
+    $query->condition($condition);
+    $query->leftJoin('menu_links', 'pl', 'ml.plid = pl.mlid');
+    $query->addField('pl', 'link_path', 'parent_link_path');
+    $query->orderBy('ml.depth');
+    $query->orderby('ml.mlid');
+    return $query;
   }
 
   /**
    * {@inheritdoc}
    */
   public function fields() {
-    return array(
+    return [
       'menu_name' => t("The menu name. All links with the same menu name (such as 'navigation') are part of the same menu."),
       'mlid' => t('The menu link ID (mlid) is the integer primary key.'),
       'plid' => t('The parent link ID (plid) is the mlid of the link above in the hierarchy, or zero if the link is at the top level in its menu.'),
       'link_path' => t('The Drupal path or external path this link points to.'),
       'router_path' => t('For links corresponding to a Drupal path (external = 0), this connects the link to a {menu_router}.path for joins.'),
       'link_title' => t('The text displayed for the link, which may be modified by a title callback stored in {menu_router}.'),
-      'options' => t('A serialized array of options to be passed to the url() or l() function, such as a query string or HTML attributes.'),
+      'options' => t('A serialized array of options to set on the URL, such as a query string or HTML attributes.'),
       'module' => t('The name of the module that generated this link.'),
       'hidden' => t('A flag for whether the link should be rendered in menus. (1 = a disabled menu item that may be shown on admin screens, -1 = a menu callback, 0 = a normal, visible link)'),
       'external' => t('A flag to indicate if the link points to a full URL starting with a protocol, like http:// (1 = external, 0 = internal).'),
@@ -61,7 +66,7 @@ class MenuLink extends DrupalSqlBase {
       'p8' => t('The eighth mlid in the materialized path. See p1.'),
       'p9' => t('The ninth mlid in the materialized path. See p1.'),
       'updated' => t('Flag that indicates that this link was generated during the update from Drupal 5.'),
-    );
+    ];
   }
 
   /**
@@ -70,6 +75,7 @@ class MenuLink extends DrupalSqlBase {
   public function prepareRow(Row $row) {
     $row->setSourceProperty('options', unserialize($row->getSourceProperty('options')));
     $row->setSourceProperty('enabled', !$row->getSourceProperty('hidden'));
+    $row->setSourceProperty('description', Unicode::truncate($row->getSourceProperty('options/attributes/title'), 255));
 
     return parent::prepareRow($row);
   }
@@ -79,6 +85,7 @@ class MenuLink extends DrupalSqlBase {
    */
   public function getIds() {
     $ids['mlid']['type'] = 'integer';
+    $ids['mlid']['alias'] = 'ml';
     return $ids;
   }
 

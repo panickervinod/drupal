@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\field\Tests\FieldDefaultValueCallbackTest.
- */
-
 namespace Drupal\field\Tests;
 
 use Drupal\field\Entity\FieldConfig;
@@ -23,7 +18,7 @@ class FieldDefaultValueCallbackTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'field_test', 'field_ui');
+  public static $modules = ['node', 'field_test', 'field_ui'];
 
   /**
    * The field name.
@@ -35,17 +30,17 @@ class FieldDefaultValueCallbackTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->fieldName = 'field_test';
 
     // Create Article node types.
     if ($this->profile != 'standard') {
-      $this->drupalCreateContentType(array(
+      $this->drupalCreateContentType([
         'type' => 'article',
         'name' => 'Article',
-      ));
+      ]);
     }
 
   }

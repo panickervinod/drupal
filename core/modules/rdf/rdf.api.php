@@ -18,14 +18,14 @@
  * defined in rdf_rdf_namespaces(), this hook should be used to define the new
  * namespace prefixes.
  *
- * @return
+ * @return string[]
  *   An associative array of namespaces where the key is the namespace prefix
  *   and the value is the namespace URI.
  *
  * @ingroup rdf
  */
 function hook_rdf_namespaces() {
-  return array(
+  return [
     'content'  => 'http://purl.org/rss/1.0/modules/content/',
     'dc'       => 'http://purl.org/dc/terms/',
     'foaf'     => 'http://xmlns.com/foaf/0.1/',
@@ -35,7 +35,7 @@ function hook_rdf_namespaces() {
     'sioct'    => 'http://rdfs.org/sioc/types#',
     'skos'     => 'http://www.w3.org/2004/02/skos/core#',
     'xsd'      => 'http://www.w3.org/2001/XMLSchema#',
-  );
+  ];
 }
 
 /**

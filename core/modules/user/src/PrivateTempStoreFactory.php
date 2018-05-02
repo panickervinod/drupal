@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\user\PrivateTempStoreFactory.
- */
-
 namespace Drupal\user;
 
 use Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface;
@@ -27,7 +22,7 @@ class PrivateTempStoreFactory {
   /**
    * The lock object used for this data.
    *
-   * @var \Drupal\Core\Lock\LockBackendInterface $lockBackend
+   * @var \Drupal\Core\Lock\LockBackendInterface
    */
   protected $lockBackend;
 
@@ -57,7 +52,7 @@ class PrivateTempStoreFactory {
    *
    * @param \Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface $storage_factory
    *   The key/value store factory.
-   * @param \Drupal\Core\Lock\LockBackendInterface $lockBackend
+   * @param \Drupal\Core\Lock\LockBackendInterface $lock_backend
    *   The lock object used for this data.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current account.
@@ -66,9 +61,9 @@ class PrivateTempStoreFactory {
    * @param int $expire
    *   The time to live for items, in seconds.
    */
-  function __construct(KeyValueExpirableFactoryInterface $storage_factory, LockBackendInterface $lockBackend, AccountProxyInterface $current_user, RequestStack $request_stack, $expire = 604800) {
+  public function __construct(KeyValueExpirableFactoryInterface $storage_factory, LockBackendInterface $lock_backend, AccountProxyInterface $current_user, RequestStack $request_stack, $expire = 604800) {
     $this->storageFactory = $storage_factory;
-    $this->lockBackend = $lockBackend;
+    $this->lockBackend = $lock_backend;
     $this->currentUser = $current_user;
     $this->requestStack = $request_stack;
     $this->expire = $expire;
@@ -84,7 +79,7 @@ class PrivateTempStoreFactory {
    * @return \Drupal\user\PrivateTempStore
    *   An instance of the key/value store.
    */
-  function get($collection) {
+  public function get($collection) {
     // Store the data for this collection in the database.
     $storage = $this->storageFactory->get("user.private_tempstore.$collection");
     return new PrivateTempStore($storage, $this->lockBackend, $this->currentUser, $this->requestStack, $this->expire);

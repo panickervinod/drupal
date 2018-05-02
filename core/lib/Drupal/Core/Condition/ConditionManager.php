@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Condition\ConditionManager.
- */
-
 namespace Drupal\Core\Condition;
 
 use Drupal\Component\Plugin\CategorizingPluginManagerInterface;
@@ -49,9 +44,9 @@ class ConditionManager extends DefaultPluginManager implements ExecutableManager
   }
 
   /**
-   * Override of Drupal\Component\Plugin\PluginManagerBase::createInstance().
+   * {@inheritdoc}
    */
-  public function createInstance($plugin_id, array $configuration = array()) {
+  public function createInstance($plugin_id, array $configuration = []) {
     $plugin = $this->getFactory()->createInstance($plugin_id, $configuration);
 
     // If we receive any context values via config set it into the plugin.

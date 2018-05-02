@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\Core\Form\FormCacheTest.
- */
-
 namespace Drupal\Tests\Core\Form;
 
 use Drupal\Core\Form\FormCache;
@@ -14,8 +9,6 @@ use Drupal\Tests\UnitTestCase;
 /**
  * @coversDefaultClass \Drupal\Core\Form\FormCache
  * @group Form
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
  */
 class FormCacheTest extends UnitTestCase {
 
@@ -88,6 +81,16 @@ class FormCacheTest extends UnitTestCase {
    * @var \Drupal\Core\PageCache\RequestPolicyInterface|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $requestPolicy;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $runTestInSeparateProcess = TRUE;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $preserveGlobalState = FALSE;
 
   /**
    * {@inheritdoc}
@@ -296,16 +299,18 @@ class FormCacheTest extends UnitTestCase {
       ->method('isAnonymous')
       ->willReturn(TRUE);
 
-    $cached_form_state = ['build_info' => ['files' => [
-      [
-        'module' => 'a_module',
-        'type' => 'the_type',
-        'name' => 'some_name',
+    $cached_form_state = [
+      'build_info' => [
+        'files' => [
+          [
+            'module' => 'a_module',
+            'type' => 'the_type',
+            'name' => 'some_name',
+          ],
+          ['module' => 'another_module'],
+        ],
       ],
-      [
-        'module' => 'another_module',
-      ],
-    ]]];
+    ];
     $this->moduleHandler->expects($this->at(0))
       ->method('loadInclude')
       ->with('a_module', 'the_type', 'some_name');

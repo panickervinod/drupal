@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\migrate\Plugin\migrate\process\MachineName.
- */
-
 namespace Drupal\migrate\Plugin\migrate\process;
 
 use Drupal\Component\Transliteration\TransliterationInterface;
@@ -16,11 +11,28 @@ use Drupal\migrate\Row;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * This plugin creates a machine name.
+ * Creates a machine name.
  *
- * The current value gets transliterated, non-alphanumeric characters removed
- * and replaced by an underscore and multiple underscores are collapsed into
- * one.
+ * The machine_name process plugin takes the source value and runs it through
+ * the transliteration service. This makes the source value lowercase,
+ * replaces anything that is not a number or a letter with an underscore,
+ * and removes duplicate underscores.
+ *
+ * Letters will have language decorations and accents removed.
+ *
+ * Example:
+ *
+ * @code
+ * process:
+ *   bar:
+ *     plugin: machine_name
+ *     source: foo
+ * @endcode
+ *
+ * If the value of foo in the source is 'áéí!' then the destination value of bar
+ * will be 'aei_'.
+ *
+ * @see \Drupal\migrate\Plugin\MigrateProcessInterface
  *
  * @MigrateProcessPlugin(
  *   id = "machine_name"
@@ -29,6 +41,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MachineName extends ProcessPluginBase implements ContainerFactoryPluginInterface {
 
   /**
+   * The transliteration service.
+   *
    * @var \Drupal\Component\Transliteration\TransliterationInterface
    */
   protected $transliteration;
@@ -37,13 +51,13 @@ class MachineName extends ProcessPluginBase implements ContainerFactoryPluginInt
    * Constructs a MachineName plugin.
    *
    * @param array $configuration
-   *  The plugin configuration.
+   *   The plugin configuration.
    * @param string $plugin_id
-   *  The plugin ID.
+   *   The plugin ID.
    * @param mixed $plugin_definition
-   *  The plugin definition.
+   *   The plugin definition.
    * @param \Drupal\Component\Transliteration\TransliterationInterface $transliteration
-   *  The transliteration service.
+   *   The transliteration service.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, TransliterationInterface $transliteration) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);

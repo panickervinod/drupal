@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Component\Utility\Number.
- */
 namespace Drupal\Component\Utility;
 
 /**
@@ -21,11 +17,11 @@ class Number {
    *
    * This is based on the number/range verification methods of webkit.
    *
-   * @param numeric $value
+   * @param float $value
    *   The value that needs to be checked.
-   * @param numeric $step
+   * @param float $step
    *   The step scale factor. Must be positive.
-   * @param numeric $offset
+   * @param float $offset
    *   (optional) An offset, to which the difference must be a multiple of the
    *   given step.
    *
@@ -54,7 +50,7 @@ class Number {
     // can't be represented with single precision floats are acceptable. The
     // fractional part of a float has 24 bits. That means remainders smaller than
     // $step * 2^-24 are acceptable.
-    $computed_acceptable_error = (double)($step / pow(2.0, 24));
+    $computed_acceptable_error = (double) ($step / pow(2.0, 24));
 
     return $computed_acceptable_error >= $remainder || $remainder >= ($step - $computed_acceptable_error);
   }

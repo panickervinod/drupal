@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\views\ResultRow.
- */
-
 namespace Drupal\views;
 
 /**
@@ -29,7 +24,7 @@ class ResultRow {
   /**
    * An incremental number which represents the row in the entire result.
    *
-   * @var integer
+   * @var int
    */
   public $index;
 
@@ -39,7 +34,7 @@ class ResultRow {
    * @param array $values
    *   (optional) An array of values to add as properties on the object.
    */
-  public function __construct(array $values = array()) {
+  public function __construct(array $values = []) {
     foreach ($values as $key => $value) {
       $this->{$key} = $value;
     }
